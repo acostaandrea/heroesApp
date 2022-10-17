@@ -2,20 +2,30 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Heroe } from '../interfaces/heroes.interface';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HeroesService {
 
+  private baseUrl: string = environment.baseUrl;
+
   constructor( private http: HttpClient) { }
 
   getHeroes(): Observable<Heroe[]>{
-    return this.http.get<Heroe[]>('http://localhost:3000/heroes')
+    return this.http.get<Heroe[]>(`${this.baseUrl}/heroes`)
   }
 
   getHeroePorId(id: string) : Observable<Heroe>{
-    return this.http.get<Heroe>(`http://localhost:3000/heroes/${id}`)
+    return this.http.get<Heroe>(`${this.baseUrl}/heroes/${id}`)
+  }
+
+  getSugerencias(termino: string) : Observable<Heroe[]>{ //es un observable que emite un arreglo en forma de Heroe
+    
+    return this.http.get<Heroe[]>(`${this.baseUrl}/heroes?q=${termino}&_limit=6`)
+
+
   }
 
 }
@@ -25,3 +35,7 @@ export class HeroesService {
 //en el listado.ts consumimos el get heroes
 
 //get es de tipo heroe como la interface y entre [] porque es una coleccionm de heroes
+
+// sacamos los http de getHeroe y lo ponemos en los environments.ts, luego generamos una variable de entorno baseUrl (mirar que elenvironment importado no sea de prudccion sino de desarrollo)
+
+//termino es lo que la persona esta buscando

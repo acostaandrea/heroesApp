@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Heroe } from '../../interfaces/heroes.interface';
 import { switchMap  } from "rxjs/operators";
 import { HeroesService } from '../../services/heroes.service';
@@ -15,7 +15,7 @@ export class HeroeComponent implements OnInit {
   heroe! : Heroe
 
   
-  constructor(private activatedRoute: ActivatedRoute, private heroesService: HeroesService) { }
+  constructor(private activatedRoute: ActivatedRoute, private heroesService: HeroesService, private router: Router) { }
 
   ngOnInit(): void {
     this.activatedRoute.params
@@ -25,5 +25,10 @@ export class HeroeComponent implements OnInit {
     .subscribe(heroe => this.heroe = heroe)
 
   }
+  regresar(){
+    this.router.navigate(['/heroes/listado'])
+  }
 
 }
+
+//importamos el private router para navegar
