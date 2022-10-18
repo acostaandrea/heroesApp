@@ -28,6 +28,10 @@ export class HeroesService {
 
   }
 
+  agregarHeroe(heroe:Heroe):Observable<Heroe>{
+    return this.http.post<Heroe>(`${this.baseUrl}/heroes`, heroe)
+  }
+
 }
 
 //hacemos uso del servicio con el httpClient
@@ -39,3 +43,5 @@ export class HeroesService {
 // sacamos los http de getHeroe y lo ponemos en los environments.ts, luego generamos una variable de entorno baseUrl (mirar que elenvironment importado no sea de prudccion sino de desarrollo)
 
 //termino es lo que la persona esta buscando
+
+//el post es para agregar al json, despues de agregarHeroe, inyectamos el servicio an agregar.component.ts
