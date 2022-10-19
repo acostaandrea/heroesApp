@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Heroe, Publisher } from '../../interfaces/heroes.interface';
 import { HeroesService } from '../../services/heroes.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap  } from "rxjs/operators";
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-agregar',
@@ -31,9 +32,13 @@ export class AgregarComponent implements OnInit {
 
   }
 
-  constructor(private heroesService: HeroesService, private activatedRoute: ActivatedRoute) { }
+  constructor(private heroesService: HeroesService, private activatedRoute: ActivatedRoute, private router:Router, private snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
+
+    if(!this.router.url.includes('editar')){
+      return
+    }
 
     this.activatedRoute.params
     .pipe(
@@ -45,18 +50,34 @@ export class AgregarComponent implements OnInit {
   guardar(){
     if(this.heroe.superhero.trim().length ===0 ){
       return
-    };
+    }; //no se guarda si no se coloca al menos el nombre del superheroe
 
     if(this.heroe.id){
       //actualizar
+      this.heroesService.actualizarHeroe(this.heroe)
+      .subscribe(heroe=> this.mostrarSnackbar('Registro actualizado')) 
     }else{
       //crear
+      this.heroesService.agregarHeroe(this.heroe)
+     .subscribe(heroe =>{
+      this.router.navigate(['/heroes/editar', heroe.id]); //una vez que se crea y se pone guardar, navegamos hasta el heroe/id creado
+      this.mostrarSnackbar('Registro creado')
+    })
+    }
+     
     }
 
-  //   this.heroesService.agregarHeroe(this.heroe)
-  //   .subscribe(resp =>{
-  //     console.log('Respuesta', resp);
-  //   })
+     borrarHeroe(){
+      this.heroesService.borrarHeroe(this.heroe.id!)
+      .subscribe(resp => {
+        this.router.navigate(['/heroes'])
+      }) //una vez que elimina se redirige a heroes
+  }
+
+  mostrarSnackbar(mensaje:string):void{
+    this.snackBar.open(mensaje,'ok!',{
+      duration: 2500
+    })
   }
 
   
@@ -75,3 +96,9 @@ export class AgregarComponent implements OnInit {
 //para hacer la trsnfotmacion importamos switchMap
 
 //si el objeto tiene id significa que estamos editando, si no tiene significa que estamos creando
+
+//para actualizar se hace una peticion put, agregar en el hreosService
+
+//cuando se inserta se deberia poder nmavegar a otro lugar,para esto importamso el router
+
+//hacer la excepcion en el imnagen.pipe
